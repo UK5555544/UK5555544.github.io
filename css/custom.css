@@ -1,0 +1,109 @@
+#nav a, 
+#nav #site-name, 
+#nav .site-page, 
+#nav #search-button a, 
+#nav .menus_item a,
+#nav #site-title {
+  color: #000 !important;
+  text-shadow: none !important; /* 去掉阴影，让黑色更纯粹 */
+}
+/* --- 全站毛玻璃核心逻辑 --- */
+/* 涵盖：导航栏、文章卡片、侧边栏、页面/文章主体、评论区、分页、归档/分类/标签列表、搜索框 */
+#nav, 
+.layout > .recent-posts > .recent-post-item, 
+.layout > #aside-content > .card-widget, 
+.layout > #content-inner > #page, 
+.layout > #content-inner > #post, 
+#post-comment,
+#pagination,
+.article-sort,
+.category-content,
+.tag-cloud-content,
+.search-dialog,
+#footer {
+  /* 使用刚才生成的噪点图作为背景叠加，增加质感 */
+  /* 如果你已经下载了图片，请替换 url('/img/noise.png') */
+  background: rgba(255, 255, 255, 0.72) !important; 
+  
+  /* 性能优先：先写私有前缀，再写标准属性 */
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(12px) saturate(180%);
+  
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); /* 增加一层淡淡的投影，更有立体感 */
+}
+
+/* --- 暗黑模式适配 --- */
+[data-theme="dark"] #nav, 
+[data-theme="dark"] .recent-post-item, 
+[data-theme="dark"] .card-widget, 
+[data-theme="dark"] #page, 
+[data-theme="dark"] #post, 
+[data-theme="dark"] #post-comment,
+[data-theme="dark"] #pagination,
+[data-theme="dark"] .article-sort,
+[data-theme="dark"] .search-dialog,
+[data-theme="dark"] #footer {
+  background: rgba(24, 24, 24, 0.65) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  backdrop-filter: blur(12px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- 细节优化：取消原本的阴影防止视觉冲突 --- */
+.layout > .recent-posts > .recent-post-item,
+.layout > #aside-content > .card-widget {
+  box-shadow: none !important;
+}
+
+/* 搜索对话框的特殊处理：确保它在最顶层且背景透明 */
+.search-dialog {
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+/* 首页文章卡片悬浮效果 */
+.recent-post-item {
+  transition: all 0.4s ease-in-out !important;
+}
+
+.recent-post-item:hover {
+  transform: translateY(-8px); /* 向上抬升 */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important; /* 加深阴影 */
+}
+/* 标题字间距调整 */
+#site-title, #site-subtitle, .article-title {
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+/* 段落行高调整，增加阅读呼吸感 */
+#article-container p {
+  line-height: 2;
+  margin-bottom: 1.5rem;
+}
+
+/* 选中文字时的颜色（与主题色一致） */
+::selection {
+  background: #49b1f5;
+  color: #fff;
+}
+/* 滚动条整体 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: #49b1f5; /* 可改为你的主题色 */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff7242; /* 悬停颜色 */
+}
+
