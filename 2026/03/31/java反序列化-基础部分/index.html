@@ -1,0 +1,337 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Java反序列化-基础部分 | uky's Blog</title><meta name="author" content="uky"><meta name="copyright" content="uky"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="JAVA反序列化 java序列化会将数据转化为二进制流进行储存，反序列化时会将二进制流还原为原始数据结构或对象。java反序列化漏洞通常是由于应用程序在反序列化数据时没有进行充分的验证，导致攻击者可以构造恶意的序列化数据，从而执行任意代码执行  java编程基础java本身就是面向对象的编程语言，此语言有以下主要特点:  大小写敏感：Java 是大小写敏感的，这就意味着标识符 Hello 与 he">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java反序列化-基础部分">
+<meta property="og:url" content="http://uk5555544.github.io/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/index.html">
+<meta property="og:site_name" content="uky&#39;s Blog">
+<meta property="og:description" content="JAVA反序列化 java序列化会将数据转化为二进制流进行储存，反序列化时会将二进制流还原为原始数据结构或对象。java反序列化漏洞通常是由于应用程序在反序列化数据时没有进行充分的验证，导致攻击者可以构造恶意的序列化数据，从而执行任意代码执行  java编程基础java本身就是面向对象的编程语言，此语言有以下主要特点:  大小写敏感：Java 是大小写敏感的，这就意味着标识符 Hello 与 he">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg">
+<meta property="article:published_time" content="2026-03-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-31T14:42:36.848Z">
+<meta property="article:author" content="uky">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Java反序列化-基础部分",
+  "url": "http://uk5555544.github.io/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/",
+  "image": "https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg",
+  "datePublished": "2026-03-30T16:00:00.000Z",
+  "dateModified": "2026-03-31T14:42:36.848Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "uky",
+      "url": "http://uk5555544.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/blog_icon.png"><link rel="canonical" href="http://uk5555544.github.io/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java反序列化-基础部分',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><meta name="generator" content="Hexo 8.1.0"></head><body><div id="web_bg" style="background-image: url(https://sm.ign.com/ign_nordic/screenshot/b/ba-scene-f/ba-scene-from-hildab_vsbg.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/blog.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">uky's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">Java反序列化-基础部分</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Java反序列化-基础部分</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-30T16:00:00.000Z" title="发表于 2026-03-31 00:00:00">2026-03-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-31T14:42:36.848Z" title="更新于 2026-03-31 22:42:36">2026-03-31</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/ctf/">ctf</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h3 id="JAVA反序列化"><a href="#JAVA反序列化" class="headerlink" title="JAVA反序列化"></a>JAVA反序列化</h3><blockquote>
+<p>java序列化会将数据转化为二进制流进行储存，反序列化时会将二进制流还原为原始数据结构或对象。java反序列化漏洞通常是由于应用程序在反序列化数据时没有进行充分的验证，导致攻击者可以构造恶意的序列化数据，从而执行任意代码执行</p>
+</blockquote>
+<h4 id="java编程基础"><a href="#java编程基础" class="headerlink" title="java编程基础"></a>java编程基础</h4><p>java本身就是面向对象的编程语言，此语言有以下主要特点:</p>
+<ul>
+<li>大小写敏感：Java 是大小写敏感的，这就意味着标识符 Hello 与 hello 是不同的</li>
+<li>类名：对于所有的类来说，类名的首字母应该大写。如果类名由若干单词组成，那么每个单词的首字母应该大写(驼峰命名法)，例如 MyFirstJavaClass</li>
+<li>方法名：所有的方法名都应该以小写字母开头。如果方法名含有若干单词，则后面的每个单词首字母大写</li>
+<li>源文件名：<strong>源文件名必须和类名相同</strong>。当保存文件的时候，你应该使用类名作为文件名保存（切记 Java 是大小写敏感的），文件名的后缀为 .java。（如果文件名和类名不相同则会导致编译错误）</li>
+<li>主方法入口：所有的 Java 程序由 public static void main(String[] args) 方法开始执行</li>
+</ul>
+<p>入口方法解释图解，类的创建也差不多是这种形式:<br><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260305200732.png"></p>
+<p>访问控制修饰符有四种: default, public, protected, private</p>
+<ul>
+<li>default: 没有修饰符，表示默认访问权限，<strong>只能在同一个包(文件夹)内访问</strong></li>
+<li>public: 公有，可以在任何地方访问</li>
+<li>protected: 受保护，可以在同一个包内访问，也可以在不同包的子类中访问</li>
+<li>private: 私有，只能在类的内部访问，不能被继承</li>
+</ul>
+<p>直接写一个java文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">test2</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String cartoon;</span><br><span class="line">    <span class="keyword">protected</span> String character; <span class="comment">//预定义变量</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">test2</span><span class="params">(String cartoon,String character)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.cartoon = cartoon;</span><br><span class="line">        <span class="built_in">this</span>.character = character;</span><br><span class="line">    &#125; <span class="comment">// 构造方法(Constructor)，构造方法的名字必须和类名相同，且没有返回值类型</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">myFavoriteCharacter</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我最喜欢的角色是&quot;</span>+ cartoon + <span class="string">&quot;里的&quot;</span> + character);</span><br><span class="line">    &#125; <span class="comment">// 普通方法(Method)，方法名可以随意命名，必须有返回值类型，如果没有返回值则写void</span></span><br><span class="line">   <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">test2</span> <span class="variable">Cartoon</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">test2</span>(<span class="string">&quot;探险活宝&quot;</span>,<span class="string">&quot;Jack&quot;</span>);</span><br><span class="line">        <span class="type">test3</span> <span class="variable">Cartoon_2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">test3</span>(<span class="string">&quot;Finn&quot;</span>);</span><br><span class="line">        Cartoon.myFavoriteCharacter(); </span><br><span class="line">        Cartoon_2.showExtraCharacter();</span><br><span class="line">    &#125; <span class="comment">// 程序入口，写在类里但不属于该类成员</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">test3</span> <span class="keyword">extends</span> <span class="title class_">test2</span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> String ExtraCharacter;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">test3</span><span class="params">(String cartoon, String character)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(cartoon, character);</span><br><span class="line">    &#125; <span class="comment">// 继承必须构造，与 this 类似，super 相当于是指向当前对象的父类，这样就可以用super.xxx来引用父类的成员</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">test3</span><span class="params">(String ExtraCharacter)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(<span class="string">&quot;探险活宝&quot;</span>, <span class="string">&quot;主角色&quot;</span>); <span class="comment">// 接口应赋值继承的变量</span></span><br><span class="line">        <span class="built_in">this</span>.ExtraCharacter = ExtraCharacter;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">showExtraCharacter</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;还有&quot;</span> + ExtraCharacter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260305211322.png"><br>可以看到java和php还是有很大不同的：java一个文件只能定义一个public类；入口对象都必须写在类里而不是外部；继承时需要调用父类的构造函数；方法调用时要指定对象和方法名之间的点号”.”而不是箭头”-&gt;”</p>
+<p>数组在java这样表示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>, <span class="string">&quot;cherry&quot;</span>&#125;;</span><br><span class="line"><span class="type">int</span>[] numbers = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"><span class="type">int</span>[] numbers = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">5</span>]; <span class="comment">// 创建一个长度为5的整数数组，默认值为0</span></span><br><span class="line">String[] arr = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">3</span>]; <span class="comment">// 创建一个长度为3的字符串数组，默认值为null</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> n : numbers) &#123;</span><br><span class="line">    System.out.println(n);</span><br><span class="line">&#125; <span class="comment">// 增强型 for 循环，遍历数组</span></span><br></pre></td></tr></table></figure>
+<p>静态方法<br>静态方法是属于类而不是实例的方法，可以直接通过类名调用，无需创建对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User.say();</span><br></pre></td></tr></table></figure>
+<p>泛型<br>定义List(盒子)可以装什么元素</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;Hello&quot;</span>);</span><br><span class="line">List&lt;?&gt; list2 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(); <span class="comment">// &lt;?&gt;叫做叫做泛型通配符，表示未知类型，可以接受任何类型的元素</span></span><br></pre></td></tr></table></figure>
+<p>我们可以利用Arrays.asList()将元素封装成一个List对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;apple&quot;</span>, <span class="string">&quot;banana&quot;</span>, <span class="string">&quot;cherry&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h4><h5 id="1-java平台三部分"><a href="#1-java平台三部分" class="headerlink" title="1. java平台三部分:"></a>1. java平台三部分:</h5><blockquote>
+<p>‌JDK‌：面向开发者，用于‌编写、编译和调试Java程序‌<br>‌JRE‌：面向普通用户，仅用于‌运行已编译好的Java程序‌<br>‌JVM‌：是‌执行Java字节码的虚拟机‌，负责将字节码转换为机器码并执行，提供了内存管理、垃圾回收等核心功能，是实现Java跨平台特性的基础</p>
+</blockquote>
+<h5 id="2-映射和反射"><a href="#2-映射和反射" class="headerlink" title="2. 映射和反射"></a>2. 映射和反射</h5><p><strong>映射</strong>:<br>ORM(对象关系映射):<br>通俗讲就是将数据库的结构转移到java对象结构上，简化数据库操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">数据库的表（table） --&gt; 类（class）</span><br><span class="line">记录（record，行数据）--&gt; 对象（object）</span><br><span class="line">字段（field）--&gt; 对象的属性（attribute）</span><br></pre></td></tr></table></figure>
+<p>json映射:<br>通过json映射库将json数据转换为java对象，或者将java对象转换为json数据，也属于反序列化的一种形式，之后详细讲讲</p>
+<p><strong>反射</strong>:<br>把通过new对象并且调用其中的方法的过程叫做“正射”，那么不使用new来创建对象并调用其中方法的过程就叫做“反射”</p>
+<h5 id="3-IO流"><a href="#3-IO流" class="headerlink" title="3. IO流"></a>3. IO流</h5><p>java包括两种IO流:文件IO流和对象IO流<br><strong>文件IO流</strong>:</p>
+<ol>
+<li><p>FileOutputStream<br>输出流，向文件写入数据</p>
+<blockquote>
+<p>核心方法有<br>write(byte[] b) &#x2F;&#x2F;将字节数组写入文件<br>close() &#x2F;&#x2F;关闭流，释放资源</p>
+</blockquote>
+</li>
+<li><p>FileInputStream<br>输入流，从文件读取数据</p>
+<blockquote>
+<p>核心方法有<br>read(byte[] b) &#x2F;&#x2F;从文件读取数据到字节数组<br>available() &#x2F;&#x2F;返回可读取的字节数</p>
+</blockquote>
+</li>
+</ol>
+<p><strong>对象IO流</strong>:</p>
+<ol>
+<li><p>ObjectOutputStream<br>对象输出流，即序列化。递归地检查对象及其引用的所有属性，将它们转换成 Java 标志性的 AC ED 00 05 开头的字节序列</p>
+<blockquote>
+<p>核心方法有<br>writeObject(Object obj) &#x2F;&#x2F;将对象写入流中进行序列化<br>defaultWriteObject() &#x2F;&#x2F;只能写在private void writeObject()中，除了自定义序列化，对其他属性进行默认序列化</p>
+</blockquote>
+</li>
+<li><p>ObjectInputStream<br>对象输入流，即反序列化。读取由 ObjectOutputStream 写入的字节流，并将其转换回原始对象</p>
+<blockquote>
+<p>核心方法有<br>readObject() &#x2F;&#x2F;从流中读取对象进行反序列化<br>defaultReadObject() &#x2F;&#x2F;只能写在private void readObject()中，除了自定义反序列化，对其他属性进行默认反序列化</p>
+</blockquote>
+</li>
+</ol>
+<p>default方法这样表现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自定义序列化过程 (魔术方法)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="comment">// 1. 一键全自动：调用 defaultWriteObject()</span></span><br><span class="line">    out.defaultWriteObject();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 手动半自动：处理特殊逻辑</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">encryptedPwd</span> <span class="operator">=</span> encrypt(<span class="built_in">this</span>.password); </span><br><span class="line">    out.writeObject(encryptedPwd); <span class="comment">// 把加密后的密码单独存进去</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="4-依旧魔术方法"><a href="#4-依旧魔术方法" class="headerlink" title="4. 依旧魔术方法"></a>4. 依旧魔术方法</h5><p><strong>readObject()方法</strong>:<br>反序列化起点，当使用ObjectInputStream.readObject()触发，相当于__wakeup()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>writeObject()方法</strong>:<br>使用ObjectOutputStream.writeObject(obj)序列化时触发，相当于__sleep()方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">writeObject</span><span class="params">(ObjectOutputStream out)</span> <span class="keyword">throws</span> IOException &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>writeReplace()方法</strong>:<br>当一个对象被序列化时，如果该对象的类定义了writeReplace()方法，那么在序列化<strong>之前</strong>会调用这个方法来获取一个替代对象进行序列化。相当于在序列化时替换对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">writeReplace</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>readResolve()方法</strong>:<br>当一个对象被反序列化时，如果该对象的类定义了readResolve()方法，那么在反序列化<strong>之后</strong>会调用这个方法来获取一个替代对象进行返回。相当于在反序列化时替换对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Object <span class="title function_">readResolve</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException &#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="反射利用"><a href="#反射利用" class="headerlink" title="反射利用"></a>反射利用</h4><p>其实看完前置知识你已经知道java反序列化原理了，和php差不多。这一节讲一讲如何利用反序列化</p>
+<h5 id="1-Class对象"><a href="#1-Class对象" class="headerlink" title="1. Class对象"></a>1. Class对象</h5><p>java里的类其实也是个对象，在编译时java.lang就会实例化一个名为Class的对象，里面储存了该类的方法和属性等信息，我们可以通过反射来调用这些方法。（注:Class也是泛型类，一般用Class&lt;?&gt;）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(classname) <span class="comment">// 获取classname类中的所有属性包括类名</span></span><br><span class="line">Class.newInstance() <span class="comment">// 实例化classname类，并触发该类的构造方法</span></span><br><span class="line">Class.getMethod(method name,arg) <span class="comment">// 获取classname类中名为method name的public方法，arg是参数类型</span></span><br><span class="line">Class.getConstructor(List.class) <span class="comment">// 获取classname类中的有参构造方法，参数是List类型</span></span><br><span class="line">Method.invoke(object, args) <span class="comment">// 调用object对象中的方法，args是参数值;如果是静态方法则第一个参数是null或者该方法所在的类</span></span><br><span class="line">obj.getClass() <span class="comment">// 获取obj对象的Class对象，前提是上文中obj必须是一个实例化对象</span></span><br><span class="line">Y1.class <span class="comment">// 获取Y1类的Class对象，前提是上文中必须有一个名为Y1的类</span></span><br></pre></td></tr></table></figure>
+<p>演示</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ReflectionDemo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        Class&lt;?&gt; clazz1 = Class.forName(<span class="string">&quot;HackerPlayer&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;forName 获取成功: &quot;</span> + clazz1.getName());</span><br><span class="line">        </span><br><span class="line">        Class&lt;?&gt; clazz2 = HackerPlayer.class;</span><br><span class="line">        System.out.println(<span class="string">&quot;类名.class 获取成功: &quot;</span> + clazz2.getName());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 前提是你手里已经有一个活生生的对象实例了</span></span><br><span class="line">        <span class="type">HackerPlayer</span> <span class="variable">existingObj</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HackerPlayer</span>(); </span><br><span class="line">        Class&lt;?&gt; clazz3 = existingObj.getClass();</span><br><span class="line">        System.out.println(<span class="string">&quot;对象.getClass() 获取成功: &quot;</span> + clazz3.getName());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 注意：在 Java 9 之后这个方法被标记为过时</span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">playerObj</span> <span class="operator">=</span> clazz1.newInstance(); </span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取名为 &quot;play&quot;，且需要一个 String 类型参数的方法</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">playMethod</span> <span class="operator">=</span> clazz1.getMethod(<span class="string">&quot;play&quot;</span>, String.class);</span><br><span class="line">        <span class="comment">// 调用 playerObj 对象里的 play 方法，并传入参数 &quot;127.0.0.1&quot;</span></span><br><span class="line">        playMethod.invoke(playerObj, <span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">        <span class="comment">// 获取静态方法 &quot;ping&quot;，因为它没有参数，所以第二个参数不写（或写 null）</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">pingMethod</span> <span class="operator">=</span> clazz1.getMethod(<span class="string">&quot;ping&quot;</span>);</span><br><span class="line">        <span class="comment">// 第一个参数（执行主体）直接传 null 即可</span></span><br><span class="line">        pingMethod.invoke(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2-forName-更深层利用"><a href="#2-forName-更深层利用" class="headerlink" title="2. forName()更深层利用"></a>2. forName()更深层利用</h5><p>Class.forName()方法不仅可以获取类的Class对象，还会触发该类的静态代码块(static block)的执行<br>它的完成源码如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(String name, <span class="type">boolean</span> initialize, ClassLoader loader)</span><br></pre></td></tr></table></figure>
+<p>Class loader是java中的类加载器，负责告诉JVM从哪里加载类文件，一般填路径<br>boolean initialize用于forname时的初始化（执行静态代码块），默认为true。也就是说，<strong>如果提前也好一个包含恶意代码静态代码块的类，并且在反序列化时调用forName()方法加载这个类，那么就可以直接触发恶意代码的执行，而不需要构造复杂的pop链了</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EvilClass</span> &#123;</span><br><span class="line">    <span class="comment">// 这是一个静态代码块，没有名字，没有参数</span></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 恶意代码</span></span><br><span class="line">            Runtime.getRuntime().exec(<span class="string">&quot;calc&quot;</span>); </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-rce"><a href="#3-rce" class="headerlink" title="3. rce"></a>3. rce</h5><p>Runtime类是java.lang中一个非常重要的类，提供了与运行时环境交互的方法，其中最常用的就是exec()方法，可以用来执行系统命令<br>但如果我们用上述方法，Class.getMethod(method name,arg)获取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line">clazz.getMethod(<span class="string">&quot;exec&quot;</span>,String.class).invoke(clazz.newInstance(), <span class="string">&quot;id&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>就会报错，前面我们说过.invoke第一个参数是对象而newInstance()负责实例化对象并触发构造方法。但Runtime类的构造方法是私有的，只能在类内部被调用，所以无法通过newInstance()来实例化Runtime对象，从而报错</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Runtime</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Runtime</span> <span class="variable">currentRuntime</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runtime</span>();</span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Runtime</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title function_">getRuntime</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime; <span class="comment">// 返回当前Runtime对象实例，关键利用点</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这时我们就可以利用反射，用下面的静态方法getRuntime()来获取Runtime对象实例，然后再调用exec()方法执行命令:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 拿到class对象</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.Runtime&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 找到那个静态的小窗户方法 getRuntime</span></span><br><span class="line"><span class="type">Method</span> <span class="variable">getRuntimeMethod</span> <span class="operator">=</span> clazz.getMethod(<span class="string">&quot;getRuntime&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 执行 getRuntime 拿到对象实例</span></span><br><span class="line"><span class="type">Object</span> <span class="variable">runtimeObj</span> <span class="operator">=</span> getRuntimeMethod.invoke(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 拿着拿到的对象，去执行 exec(&quot;id&quot;)</span></span><br><span class="line">clazz.getMethod(<span class="string">&quot;exec&quot;</span>, String.class).invoke(runtimeObj, <span class="string">&quot;id&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>还有两种反射机制<br>一个是ProcessBuilder:ProcessBuilder用于创建操作系统进程，它提供一种启动和管理进程的方法，我们可以通过实例化这个类并且通过反射调用其中的start()方法来开启一个子进程，进行rce</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ProcessBuilder</span><span class="params">(String... command)</span></span><br><span class="line"><span class="comment">// String...指代可变参数，即可以传入任意数量的字符串参数打包成String数组</span></span><br><span class="line"><span class="comment">// ProcessBuilder pb = new ProcessBuilder(&quot;cmd.exe&quot;, &quot;/c&quot;, &quot;whoami&quot;).start();</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">ProcessBuilder</span><span class="params">(List&lt;String&gt; command)</span></span><br><span class="line"><span class="comment">// List&lt;String&gt;指代一个字符串列表，等价于上面那个方法</span></span><br><span class="line"><span class="string">&#x27;&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">List&lt;String&gt; cmdList = new ArrayList&lt;&gt;();</span></span><br><span class="line"><span class="string"> cmdList.add(&quot;cmd.exe&quot;);</span></span><br><span class="line"><span class="string"> cmdList.add(&quot;/c&quot;);</span></span><br><span class="line"><span class="string"> cmdList.add(&quot;ping 127.0.0.1&quot;);</span></span><br><span class="line"><span class="string"> ProcessBuilder pb = new ProcessBuilder(cmdList);</span></span><br><span class="line"><span class="string"> pb.start();</span></span><br><span class="line"><span class="string">&#x27;</span><span class="string">&#x27;&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>就有如下payload</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Class</span> <span class="variable">clazz</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;java.lang.ProcessBuilder&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> clazz.getConstructor(List.class).newInstance(Arrays.asList(<span class="string">&quot;calc.exe&quot;</span>));</span><br><span class="line"><span class="type">ProcessBuilder</span> <span class="variable">pb</span> <span class="operator">=</span> (ProcessBuilder) obj;</span><br><span class="line">pb.start();</span><br></pre></td></tr></table></figure>
+<p>forName接手了ProcessBuilder类的加载。getConstructor(List.class)获取了ProcessBuilder类的有参构造方法并通过newInstance()传参并实例化clazz。()强制将obj转化为ProcessBuilder对象，最后调用start()方法执行命令</p>
+<p>第二个是getDeclared<br>这个方法很厉害，它可以获取类中所有的成员方法和成员变量，包括私有的和受保护的（但不包括父类）<br>它有两个形式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class.getDeclaredMethod() <span class="comment">// 用法同getMethod()，但可以获取所有方法包括私有方法</span></span><br><span class="line">Class.getDeclaredConstructor() <span class="comment">// 用法同getConstructor()，但可以获取所有构造方法包括私有构造方法</span></span><br></pre></td></tr></table></figure>
+<p>但访问私有成员需要调用setAccessible(true)方法来取消访问检查，否则会报IllegalAccessException异常，利用这个方法也可以调用Runtime</p>
+<blockquote>
+<p>学习内容源自<a target="_blank" rel="noopener" href="https://xz.aliyun.com/news/11601">java反序列化预备全知</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://uk5555544.github.io">uky</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://uk5555544.github.io/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/">http://uk5555544.github.io/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://uk5555544.github.io" target="_blank">uky's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/java/">java</a></div><div class="post-share"><div class="social-share" data-image="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/02/14/SHCTF2026wp/" title="2026SHCTF-web阶段1/2"><img class="cover" src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223617.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">2026SHCTF-web阶段1/2</div></div><div class="info-2"><div class="info-item-1">2026SHCTF writeup 🌐WEB 只有阶段一二   0x01 ezphp审计源码 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061&lt;?phphighlight_file(__FILE__);error_reporting(0);class Sun&#123;    public $sun;    public function __destruct()&#123;        die(&quot;Maybe you should fly to the &quot;.$this-&gt;sun);    &#125;&#125;class Solar&#123;    private $Sun;    public $Mercury;    public $Venus;    public $Earth;    public $Mars;    public $Jupiter;    ...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/blog.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">uky</div><div class="author-info-description">事在人为</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/UK5555544"><i class="fab fa-github"></i><span>关 注 我</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/UK5555544" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:3036074562@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">uky又穷又懒，用的git图床，访问可能会有点慢，请见谅～</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#JAVA%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">JAVA反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#java%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="toc-number">1.1.</span> <span class="toc-text">java编程基础</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="toc-number">1.2.</span> <span class="toc-text">前置知识</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-java%E5%B9%B3%E5%8F%B0%E4%B8%89%E9%83%A8%E5%88%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. java平台三部分:</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-%E6%98%A0%E5%B0%84%E5%92%8C%E5%8F%8D%E5%B0%84"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. 映射和反射</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-IO%E6%B5%81"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. IO流</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-%E4%BE%9D%E6%97%A7%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95"><span class="toc-number">1.2.4.</span> <span class="toc-text">4. 依旧魔术方法</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%8D%E5%B0%84%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.</span> <span class="toc-text">反射利用</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-Class%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. Class对象</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-forName-%E6%9B%B4%E6%B7%B1%E5%B1%82%E5%88%A9%E7%94%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. forName()更深层利用</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-rce"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. rce</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/" title="Java反序列化-基础部分"><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java反序列化-基础部分"/></a><div class="content"><a class="title" href="/2026/03/31/java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E5%9F%BA%E7%A1%80%E9%83%A8%E5%88%86/" title="Java反序列化-基础部分">Java反序列化-基础部分</a><time datetime="2026-03-30T16:00:00.000Z" title="发表于 2026-03-31 00:00:00">2026-03-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/14/SHCTF2026wp/" title="2026SHCTF-web阶段1/2"><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223617.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2026SHCTF-web阶段1/2"/></a><div class="content"><a class="title" href="/2026/02/14/SHCTF2026wp/" title="2026SHCTF-web阶段1/2">2026SHCTF-web阶段1/2</a><time datetime="2026-02-13T16:00:00.000Z" title="发表于 2026-02-14 00:00:00">2026-02-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%A5%E9%97%A8(%E4%BA%8C)/" title="数据库入门(二)"><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260214162955.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库入门(二)"/></a><div class="content"><a class="title" href="/2026/02/05/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%A5%E9%97%A8(%E4%BA%8C)/" title="数据库入门(二)">数据库入门(二)</a><time datetime="2026-02-04T16:00:00.000Z" title="发表于 2026-02-05 00:00:00">2026-02-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/29/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%A5%E9%97%A8(%E4%B8%80)/" title="数据库入门(一)"><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260205162740.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="数据库入门(一)"/></a><div class="content"><a class="title" href="/2026/01/29/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%85%A5%E9%97%A8(%E4%B8%80)/" title="数据库入门(一)">数据库入门(一)</a><time datetime="2026-01-28T16:00:00.000Z" title="发表于 2026-01-29 00:00:00">2026-01-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/11/2025ISCTF%E9%83%A8%E5%88%86wp/" title="2025ISCTF-wp"><img src="https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223413.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2025ISCTF-wp"/></a><div class="content"><a class="title" href="/2025/12/11/2025ISCTF%E9%83%A8%E5%88%86wp/" title="2025ISCTF-wp">2025ISCTF-wp</a><time datetime="2025-12-10T16:00:00.000Z" title="发表于 2025-12-11 00:00:00">2025-12-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(https://raw.githubusercontent.com/UK5555544/uky_images/main/blogs/20260331223610.jpg);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By uky</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.1.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="2030210545" data-server="netease" data-type="song" data-fixed="true" data-autoplay="true" data-mini="true" data-loop="all"> </div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/metingjs/dist/Meting.min.js"></script><script>(() => {
+  const destroyAplayer = () => {
+    if (window.aplayers) {
+      for (let i = 0; i < window.aplayers.length; i++) {
+        if (!window.aplayers[i].options.fixed) {
+          window.aplayers[i].destroy()
+        }
+      }
+    }
+  }
+
+  const runMetingJS = () => {
+    typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+  }
+
+  btf.addGlobalFn('pjaxSend', destroyAplayer, 'destroyAplayer')
+  btf.addGlobalFn('pjaxComplete', loadMeting, 'runMetingJS')
+})()</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>(() => {
+  const pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      const usePjax = true
+      false
+        ? (usePjax ? pjax.loadUrl('/404.html') : window.location.href = '/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})()</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
